@@ -3,25 +3,23 @@ import Image from 'next/image';
 import { Inter } from '@next/font/google';
 import styles from '@/styles/Home.module.css';
 import Header from '@/components/common/Header';
-import { Fragment, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import main from '/public/main.png';
 import { useRouter } from 'next/router';
 import Product from '@/components/Product';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
+import { useLocation } from 'react-router-dom';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export default function Main() {
   const router = useRouter();
-  
-  
+ 
   const { data, status } = useSession();
 
   return (
     <Fragment>
-      
-      <Header />
       <div className="flex h-screen w-screen flex-row ">
         <div className="z-50 w-1/4">
           <p className="mt-20 ml-28 h-[500px] ">

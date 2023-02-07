@@ -1,15 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useSession } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import axios from 'axios';
+import { useRouter } from 'next/router';
+
 
 const LOGOUT_URL = "http://localhost:8000/auth/logout";
 
 const HeaderComponent = (props : any) => {
   const { data, status } = useSession();
-  console.log(data);
-  
+  const router = useRouter();
+
+  console.log(`navbar user : ${router.query.name}`);
+  const user = router.query.name;
+
   const logout = () => {
+    signOut({ callbackUrl: '/' });
     axios.post(LOGOUT_URL,null)
     .then(()=>{
         console.log("success");
@@ -46,13 +52,13 @@ const HeaderComponent = (props : any) => {
           >
             Control
           </Link>
-          <Link
-            href="/faq"
+          <button
+            onClick={()=>{router.replace('/boards/main')}}
             className="flex h-full w-52 items-center justify-evenly text-4xl hover:bg-gray-100 hover:underline hover:underline-offset-4"
           >
             FAQ
-          </Link>
-            {status != "unauthenticated" ? <div>안녕하세요 {data?.user?.name}<button onClick={()=>{logout();}}>로그아웃</button></div> : <button><Link href={"/login"}>로그인</Link></button>}
+          </button>
+            {status != "unauthenticated" || user != null ? <div>안녕하세요 {user}{data?.user?.name}<button onClick={()=>{logout();}}>로그아웃</button></div> : <button><Link href={"/login"}>로그인</Link></button>}
         </div>
       </div>
     </header>

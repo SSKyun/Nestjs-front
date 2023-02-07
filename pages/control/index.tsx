@@ -61,7 +61,6 @@ export interface DummyProps {
 export default function Control() {
   return (
     <div>
-      <Header></Header>
       <DataLine />
       <div
         style={{

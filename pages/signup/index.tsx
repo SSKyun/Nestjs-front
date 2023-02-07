@@ -76,6 +76,7 @@ export default function SignUp() {
               <div>
               <input placeholder="아이디 입력" value={id} onChange={(e)=>{setId(e.target.value);}}/>
               <input placeholder="비밀번호 입력" type='password' onChange={(e)=>{setPassword(e.target.value);}}/>
+              {/* 비밀번호 확인 로직  */}
               <input placeholder='별명 입력' type='text' onChange={(e)=>{setNickname(e.target.value)}}/>
               </div>
               <button onClick={()=>{signup();}}>회원가입</button>

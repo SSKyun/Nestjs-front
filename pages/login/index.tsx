@@ -8,6 +8,7 @@ import Link from 'next/link';
 import mainRequest from '@/utils/request/mainReqeust';
 import { useState } from 'react';
 import HeaderComponent from '@/components/common/Header';
+import { useNavigate } from 'react-router-dom';
 
 interface LoginForm {
   id: string;
@@ -20,6 +21,7 @@ export default function Login() {
     const [id,setId] = useState("");
     const [password,setPassword] = useState("");
     const [user,setUser] = useState("");
+    const router = useRouter();
 
     const login = () => {
         mainRequest.post(SERVER_URL_SIGN_IN,{
@@ -27,17 +29,17 @@ export default function Login() {
             password : password,
         }).then((res)=>{
             setUser(res.data.username);
-            console.log(user);
             window.alert('로그인 성공!');
-            router.replace("/");
+            router.replace({
+              pathname:"/",
+              query: {
+                name : res.data.username
+              }
+            })
         }).catch(()=>{
             window.alert('로그인 실패! 다시 시도 해 주세요.');
         });
     }
-    function SessionId(props : string){
-      console.log(props);
-    }
-    
   // const [session, loading] = useSession();
 
   const {
@@ -48,7 +50,6 @@ export default function Login() {
   } = useForm<LoginForm>({
     mode: 'onChange',
   });
-  const router = useRouter();
 
   const onValid = (data: LoginForm) => {
     onSubmit;
@@ -84,7 +85,6 @@ export default function Login() {
       </div>
       <div>
                 <h1>로그인</h1>
-                <HeaderComponent name={user} />
                 <div>
                 <input placeholder="아이디 입력" value={id} onChange={(e)=>{setId(e.target.value);}}/>
                 <input placeholder="비밀번호 입력" type='password' onChange={(e)=>{setPassword(e.target.value);}}/>
@@ -96,8 +96,7 @@ export default function Login() {
               className="mx-auto mt-8 w-40 rounded-md bg-yellow-500 font-semibold"
               onClick={() =>
                 signIn('kakao', { callbackUrl: 'http://localhost:3000' })
-              }
-            >
+              }>
               카카오로그인
             </button>
       

@@ -6,7 +6,7 @@ import profileImage from '/public/login.png';
 export default function Control() {
   return (
     <div>
-      <Header></Header>
+      
       <div className="flex h-screen flex-row bg-slate-500">
         <div className="h-full w-1/5 bg-orange-500"></div>
         <div className="h-full w-4/5 bg-green-500">
