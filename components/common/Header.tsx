@@ -10,15 +10,20 @@ const LOGOUT_URL = "http://localhost:8000/auth/logout";
 const HeaderComponent = (props : any) => {
   const { data, status } = useSession();
   const router = useRouter();
-
-  console.log(`navbar user : ${router.query.name}`);
+  const [user2,setUser] = useState("");
+  let test:any;
+  if (typeof window !== 'undefined') {
+    // Perform localStorage action
+    test = localStorage.getItem('name');
+  }
   const user = router.query.name;
 
   const logout = () => {
     signOut({ callbackUrl: '/' });
     axios.post(LOGOUT_URL,null)
     .then(()=>{
-        console.log("success");
+        localStorage.removeItem('name');
+        localStorage.removeItem('accessToken');
       }).catch((err)=>{
         console.log(err);
       });
@@ -58,7 +63,7 @@ const HeaderComponent = (props : any) => {
           >
             FAQ
           </button>
-            {status != "unauthenticated" || user != null ? <div>안녕하세요 {user}{data?.user?.name}<button onClick={()=>{logout();}}>로그아웃</button></div> : <button><Link href={"/login"}>로그인</Link></button>}
+            {status != "unauthenticated" || test != null ? <div>안녕하세요 {test}{data?.user?.name}<button onClick={()=>{logout();}}>로그아웃</button></div> : <button><Link href={"/login"}>로그인</Link></button>}
         </div>
       </div>
     </header>

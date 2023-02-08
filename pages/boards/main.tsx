@@ -19,7 +19,6 @@ const BoardPage = () => {
     useEffect(()=>{
         const foo =async()=>{
             await authRequest.get("/boards",{
-
             }).then((res)=>{
                 console.log(res.data);
                 //router.replace("/");
@@ -29,7 +28,7 @@ const BoardPage = () => {
                     // });
                 }
             }).catch(()=>{
-                router.replace("../auth/login");
+                router.push('/auth/login');
             });
         }
         foo();

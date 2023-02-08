@@ -30,6 +30,7 @@ export default function Login() {
         }).then((res)=>{
             setUser(res.data.username);
             window.alert('로그인 성공!');
+            localStorage.setItem("name",res.data.username);
             router.replace({
               pathname:"/",
               query: {
