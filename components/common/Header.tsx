@@ -11,10 +11,12 @@ const HeaderComponent = (props : any) => {
   const { data, status } = useSession();
   const router = useRouter();
   const [user2,setUser] = useState("");
-  let test:any;
+  let localLogin:any;
+  let kakaoLogin:any = data?.user?.name;
   if (typeof window !== 'undefined') {
     // Perform localStorage action
-    test = localStorage.getItem('name');
+    localLogin = localStorage.getItem('name');
+    localStorage.setItem("kakao-Name",kakaoLogin);
   }
   const user = router.query.name;
 
@@ -24,7 +26,7 @@ const HeaderComponent = (props : any) => {
     .then(()=>{
         localStorage.removeItem('name');
         localStorage.removeItem('accessToken');
-      }).catch((err)=>{
+      }).then(()=>{localStorage.removeItem('kakao-Name');}).catch((err)=>{
         console.log(err);
       });
   }
@@ -63,7 +65,7 @@ const HeaderComponent = (props : any) => {
           >
             FAQ
           </button>
-            {status != "unauthenticated" || test != null ? <div>안녕하세요 {test}{data?.user?.name}<button onClick={()=>{logout();}}>로그아웃</button></div> : <button><Link href={"/login"}>로그인</Link></button>}
+            {status != "unauthenticated" || localLogin != null ? <div>안녕하세요 {localLogin}{kakaoLogin}<button onClick={()=>{logout();}}>로그아웃</button></div> : <button><Link href={"/login"}>로그인</Link></button>}
         </div>
       </div>
     </header>

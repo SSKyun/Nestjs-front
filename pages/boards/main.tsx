@@ -15,20 +15,23 @@ const BoardPage = () => {
         userId : '',
         created_at: ''
     }])
+
+    // const createButton = () => {
+    //     if(localStorage.getItem("kakao-Name") === undefined){
+    //         router.push("/");
+    //     }else{
+    //         router.replace('/boards/create');
+    //     }
+    // }
     
     useEffect(()=>{
         const foo =async()=>{
             await authRequest.get("/boards",{
             }).then((res)=>{
                 console.log(res.data);
-                //router.replace("/");
-                if(res.data.length>0){
-                    // return res.map((data)=>{
-                    //     <div key={data.id}>{data.title}</div>
-                    // });
-                }
+                
             }).catch(()=>{
-                router.push('/auth/login');
+                router.push('/login');
             });
         }
         foo();
@@ -36,7 +39,7 @@ const BoardPage = () => {
     return(
         <div>
             <div>게시판</div>
-            <button><Link href={"/boards/create"}>글쓰기</Link></button>
+            <button onClick={()=>{router.push("/")}}>글쓰기</button>
         </div>
     );
 }

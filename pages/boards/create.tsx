@@ -1,19 +1,23 @@
+import { Alegreya } from "@next/font/google";
 import axios from "axios";
+import { useRouter } from "next/router";
 import React , {useState} from "react"
 
 const CreateBoard = () => {
 
     const [title,setTitle] = useState("");
     const [description,setDescription] = useState("");
+    const router = useRouter();
     
     function create(){
         axios.post("http://localhost:8000/boards",{
             title,
             description
         }).then((res)=>{
-            console.log(res.data);
+            console.log(res.data.id);
+            router.replace(`/board/show`);
         }).catch((error)=>{
-            console.log(error);
+            alert("제목을 2글자 이상 입력해주세요.");
         });
     }
 

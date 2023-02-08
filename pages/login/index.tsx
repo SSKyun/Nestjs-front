@@ -33,9 +33,6 @@ export default function Login() {
             localStorage.setItem("name",res.data.username);
             router.replace({
               pathname:"/",
-              query: {
-                name : res.data.username
-              }
             })
         }).catch(()=>{
             window.alert('로그인 실패! 다시 시도 해 주세요.');
