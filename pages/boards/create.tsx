@@ -15,7 +15,7 @@ const CreateBoard = () => {
             description
         }).then((res)=>{
             console.log(res.data.id);
-            router.replace(`/board/show`);
+            router.replace("/boards/main");
         }).catch((error)=>{
             alert("제목을 2글자 이상 입력해주세요.");
         });

@@ -25,7 +25,6 @@ const HeaderComponent = (props : any) => {
     axios.post(LOGOUT_URL,null)
     .then(()=>{
         localStorage.removeItem('name');
-        localStorage.removeItem('accessToken');
       }).then(()=>{localStorage.removeItem('kakao-Name');}).catch((err)=>{
         console.log(err);
       });

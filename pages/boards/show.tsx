@@ -1,7 +1,9 @@
 import axios from "axios";
 import Link from "next/link";
-import React , {useState} from "react"
+import React , {useEffect, useState} from "react"
 
+
+const SHOW_SERVER_URL = "http://localhost:8000/boards"
 const ShowBoard = () => {
 
     // function delete(id:number){
@@ -13,6 +15,9 @@ const ShowBoard = () => {
     //         console.log(error);
     //     });
     // }
+    useEffect(()=>{
+        axios.post(SHOW_SERVER_URL,{})
+    },[])
 
     return(
         <>

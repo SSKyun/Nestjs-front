@@ -36,10 +36,18 @@ const BoardPage = () => {
         }
         foo();
     },[])
+
+    const createBoard = () => {
+        if(localStorage.getItem("kakao-Name") !== "undefined"){
+            router.push("/boards/create");
+        }else{
+            router.replace("/");
+        }
+    }
     return(
         <div>
             <div>게시판</div>
-            <button onClick={()=>{router.push("/")}}>글쓰기</button>
+            <button onClick={()=>{createBoard();}}>글쓰기</button>
         </div>
     );
 }
