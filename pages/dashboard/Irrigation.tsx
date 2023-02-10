@@ -64,6 +64,7 @@ export default function Irrigation(){
           <input type="number" onChange={(e)=>{SetTime(e);}} placeholder="00"/><>분</>
           <button onClick={()=>{PlayButton();}} className="ml-6 mr-6">가동</button>
           <button className="mr-6" >정지</button>
+          <button className="mr-6">저장</button>
           <button>삭제</button>
         </div>
 
