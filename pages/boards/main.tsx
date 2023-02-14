@@ -38,7 +38,7 @@ const BoardPage = () => {
     },[])
 
     const createBoard = () => {
-        if(localStorage.getItem("kakao-Name") !== "undefined"){
+        if(localStorage.getItem("kakao-Name") !== "undefined" || localStorage.getItem("name")){
             router.push("/boards/create");
         }else{
             router.replace("/");
