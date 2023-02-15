@@ -1,3 +1,4 @@
+import authRequest from "@/utils/request/authRequest";
 import axios from "axios";
 import { useState } from "react";
 
@@ -21,8 +22,7 @@ export default function Irrigation(){
   }
 
   const PlayButton = () => {
-    axios.post(SERVER_URL,{
-      user : localStorage.getItem('name') || localStorage.getItem("kakao-Name"),
+    authRequest.post(SERVER_URL,{
       time : min,
       linename : line,
       onoff : true

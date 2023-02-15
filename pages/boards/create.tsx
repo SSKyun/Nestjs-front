@@ -1,3 +1,4 @@
+import authRequest from "@/utils/request/authRequest";
 import { Alegreya } from "@next/font/google";
 import axios from "axios";
 import { useRouter } from "next/router";
@@ -10,15 +11,17 @@ const CreateBoard = () => {
     const router = useRouter();
     
     function create(){
-        axios.post("http://localhost:8000/boards",{
+        authRequest.post('/boards',{
             title,
-            description
+            description,
+            //status : "PUBLIC" 혹은 "PRIVATE" 라디오 버튼 같은 거 추가 시켜서 
         }).then((res)=>{
-            console.log(res.data.id);
-            router.replace("/boards/main");
-        }).catch((error)=>{
-            console.log(error)
-        });
+            console.log(res.data);
+            router.replace('/boards/main');
+        }).catch((err)=>{
+            console.log(err);
+            alert("정확하게 입력해 주세요.");
+        })
     }
 
     return(

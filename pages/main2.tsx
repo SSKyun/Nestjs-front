@@ -1,69 +1,101 @@
-import Head from 'next/head';
-import Image from 'next/image';
-import { Inter } from '@next/font/google';
-import styles from '@/styles/Home.module.css';
-import Header from '@/components/common/Header';
-import { Fragment } from 'react';
-import main from '/public/main.png';
-import { useRouter } from 'next/router';
-import Product from '@/components/Product';
+import * as React from 'react';
+import styled from 'styled-components';
+import Router from 'next/router';
+import { kakaoInit } from '../utils/kakao/kakaoinit';
 
-// const inter = Inter({ subsets: ['latin'] });
+const Index = () => {
+    
+    const kakaoLogin = async () => {
+        // 카카오 초기화
+        const kakao = kakaoInit();
 
-export default function Home() {
-  const router = useRouter();
+        // 카카오 로그인 구현
+        kakao.Auth.login({
+            success: () => {
+                kakao.API.request({
+                    url: '/v2/user/me', // 사용자 정보 가져오기
+                    //token : 'oauth/token',
+                    // data: JSON.stringify({'token':authObj['access_token']}),
+                    success: (res: any) => {
+                        // 로그인 성공할 경우 정보 확인 후 /kakao 페이지로 push
+                        console.log(res);
+                        var accessToken = kakao.Auth.getAccessToken();
+                        kakao.Auth.setAccessToken(accessToken);
+                        Router.push('/kakao');
+                    },
+                    fail: (error: any) => {
+                        console.log(error);
+                    }
+                })
+            },
+            fail: (error: any) => {
+                console.log(error);
+            }
+        })
+        
+    }
 
-  return (
-    <Fragment>
-      <Header />
-      <div className="relative h-[850px] w-full overflow-hidden bg-[#f5f9fd]">
-        <Image
-          src={main}
-          alt="main image"
-          className="absolute left-[447px] top-[-310px] h-[1469px] w-[1825px] object-cover"
-          placeholder="blur"
-        />
-        <p className="absolute left-[77px] top-[114px] w-[851px] text-left text-8xl font-bold text-black">
-          <span className="w-[851px] text-left text-8xl font-bold text-black">
-            The
-          </span>
-          <br />
-          <span className="w-[851px] text-left text-8xl font-bold text-black">
-            future of{' '}
-          </span>
-          <br />
-          <span className="w-[851px] text-left text-8xl font-bold text-black">
-            irrigation
-          </span>
-          <br />
-          <span className="w-[851px] text-left text-8xl font-bold text-black">
-            is now
-          </span>
-        </p>
-        <p className="absolute left-[77px] top-[668px] text-left text-2xl font-bold text-black">
-          <span className="text-left text-2xl font-bold text-black">
-            나만의 스마트팜을
-          </span>
-          <br />
-          <span className="text-left text-2xl font-bold text-black">
-            만들어 보세요
-          </span>
-        </p>
-        <div className="absolute left-[77px] top-[781px] h-[66px] w-[151px] overflow-hidden bg-[#282828]">
-          <div className="absolute left-[201px] top-0 h-[66px] w-[151px] overflow-hidden bg-[#f5f9fd]">
-            <p className="absolute left-9 top-[22px] text-left text-[15px] text-[#282828]">
-              Contact us
-            </p>
-          </div>
-          <button
-            // onClick={() => router.push('/signin')}
-            className="absolute left-9 top-[22px] text-left text-[15px] text-white"
-          >
-            Contact us
-          </button>
-        </div>
-      </div>
-      <Product />
-    </Fragment>
-  );
+    return (
+        <Wrapper>
+            <Header.Container>
+                <Header.Title>로그인할 방법을 선택해주세요.</Header.Title>
+            </Header.Container>
+
+            <Button.Container>
+                <Button.ButtonList>
+                    <Button.KakaoButton onClick={kakaoLogin}>
+                        <Button.ButtonText>Kakao</Button.ButtonText>
+                    </Button.KakaoButton>
+                </Button.ButtonList>
+            </Button.Container>
+        </Wrapper>
+    )
+}
+
+export default Index;
+
+const Wrapper = styled.div`
+    max-width: 720px;
+
+    margin: 0 auto;
+`
+
+const Header = {
+    Container: styled.div`
+        text-align: center;
+    `,
+
+    Title: styled.h2``,
+}
+
+const Button = {
+    Container: styled.div``,
+
+    ButtonList: styled.div`
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    `,
+
+    KakaoButton: styled.button`
+        background-color: #fef01b;
+
+        width: 360px;
+        height: 40px;
+
+        margin: 6px 0;
+
+        border: none;
+        border-radius: 6px;
+
+        cursor: pointer;
+    `,
+
+    ButtonText: styled.h4`
+        margin: 0;
+        padding: 0;
+        
+        font-size: 18px;
+        color: #ffffff;
+    `,
 }
