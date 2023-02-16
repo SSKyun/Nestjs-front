@@ -4,11 +4,30 @@ import { signOut, useSession } from 'next-auth/react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
+import { kakaoInit } from '@/utils/kakao/kakaoinit';
 //import logoImage from '/public/logo.webp';
 
 const LOGOUT_URL = 'http://localhost:8000/auth/logout';
 
-const HeaderComponent = (props: any) => {
+const HeaderComponent = () => {
+  useEffect(()=>{
+    const kakao = kakaoInit();
+  },[])
+  const kakao = kakaoInit();
+  const KakaoLogout = () => {
+
+    kakao.API.request({
+        url: '/v1/user/unlink',
+        success: (res: any) => { //로그아웃 성공 시
+            console.log(res);
+            router.push('/');
+            localStorage.removeItem('name');
+        },
+        fail: (error: any) => {
+            console.log(error);
+        }
+    })
+}
   const { data, status } = useSession();
   const router = useRouter();
   const [user2, setUser] = useState('');
@@ -17,7 +36,7 @@ const HeaderComponent = (props: any) => {
   if (typeof window !== 'undefined') {
     // Perform localStorage action
     localLogin = localStorage.getItem('name');
-    localStorage.setItem('kakao-Name', kakaoLogin);
+    //localStorage.setItem('kakao-Name', kakaoLogin);
   }
   const user = router.query.name;
 
@@ -35,6 +54,7 @@ const HeaderComponent = (props: any) => {
         console.log(err);
       });
   };
+ 
 
   return (
     <>

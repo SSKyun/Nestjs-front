@@ -1,27 +1,66 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import Router from 'next/router';
+import Router, { useRouter } from 'next/router';
 import { kakaoInit } from '../utils/kakao/kakaoinit';
+import axios from 'axios';
+import { useState } from 'react';
+import mainRequest from '@/utils/request/mainReqeust';
+
+const SERVER_URL = "http://localhost:8000/auth/signup";
+const SERVER_URL2 = "http://localhost:8000/auth/signin";
 
 const Index = () => {
-    
+    const [f_id,setF_id] = useState(""); // 비번이랑 휴대폰번호 해야댐.
+    const [f_name,setF_name] = useState("");
+    const router = useRouter();
+
     const kakaoLogin = async () => {
-        // 카카오 초기화
+
         const kakao = kakaoInit();
+        
 
         // 카카오 로그인 구현
         kakao.Auth.login({
+            
             success: () => {
                 kakao.API.request({
                     url: '/v2/user/me', // 사용자 정보 가져오기
-                    //token : 'oauth/token',
-                    // data: JSON.stringify({'token':authObj['access_token']}),
                     success: (res: any) => {
-                        // 로그인 성공할 경우 정보 확인 후 /kakao 페이지로 push
-                        console.log(res);
-                        var accessToken = kakao.Auth.getAccessToken();
-                        kakao.Auth.setAccessToken(accessToken);
-                        Router.push('/kakao');
+                        // console.log(res.properties.nickname)
+                        setF_id("test@test.com");
+                        setF_name(res.properties.nickname);
+                        console.log(res.kakao_account.email)
+                        axios.post(SERVER_URL,{ //회원가입
+                            username : f_id,
+                            password : "qwer123!", //보류
+                            nickname : f_name,
+                            phone_number : "01083147735", //보류
+                        }).then((res)=>{//처음 로그인이라면 
+                            console.log("첫번째 로그인 시도 전")
+                            mainRequest.post(SERVER_URL2,{
+                                username : f_id,
+                                password : "qwer123!",
+                            }).then((res)=>{
+                                console.log(`${res} 첫번째 로그인 성공`);
+                                router.replace('/');
+                            }).catch((err)=>{
+                                console.log(`${err} 첫번째 로그인 실패`);
+                            })
+                        }).catch((err)=>{ //실패시(db가 있다면)
+                            console.log(`${err} 첫번째 실패후 로그인 전`);
+                            mainRequest.post(SERVER_URL2,{
+                                username : f_id,
+                                password : "qwer123!"
+                            }).then((res)=>{
+                                console.log(`${res} n번째 로그인 성공`)
+                                router.replace('/');
+                            }).catch((err)=>{
+                                console.log(`${err} n번째 로그인 실패`);
+                                
+                            })
+                        })
+                        // console.log("씨발")
+                        // Router.push('/kakao');
                     },
                     fail: (error: any) => {
                         console.log(error);
