@@ -19,7 +19,7 @@ export default function Main() {
   const { data, status } = useSession();
 
   return (
-    <Fragment>
+    <>
       <div className="flex h-screen w-screen flex-row ">
         <div className="z-50 w-1/4">
           <p className="mt-20 ml-28 h-[500px] ">
@@ -59,6 +59,6 @@ export default function Main() {
         ></Image>
       </div>
       <Product />
-    </Fragment>
+    </>
   );
 }
