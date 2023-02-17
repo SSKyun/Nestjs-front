@@ -27,7 +27,7 @@ const Index = () => {
                     url: '/v2/user/me', // 사용자 정보 가져오기
                     success: (res: any) => {
                         // console.log(res.properties.nickname)
-                        setF_id("test@test.com");
+                        setF_id(res.kakao_account.email);
                         setF_name(res.properties.nickname);
                         console.log(res.kakao_account.email)
                         axios.post(SERVER_URL,{ //회원가입

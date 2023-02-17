@@ -9,6 +9,7 @@ import mainRequest from '@/utils/request/mainReqeust';
 import { useState } from 'react';
 import HeaderComponent from '@/components/common/Header';
 import { useNavigate } from 'react-router-dom';
+import { kakaoInit } from '@/utils/kakao/kakaoinit';
 
 interface LoginForm {
   id: string;
@@ -16,12 +17,16 @@ interface LoginForm {
 }
 
 const SERVER_URL_SIGN_IN = "http://localhost:8000/auth/signin";
+const SERVER_URL_SIGN_UP = "http://localhost:8000/auth/signup";
+
 
 export default function Login() {
+  const [f_id,setF_id] = useState(""); // 비번이랑 휴대폰번호 해야댐.
+    const [f_name,setF_name] = useState("");
+    const router = useRouter();
     const [id,setId] = useState("");
     const [password,setPassword] = useState("");
     const [user,setUser] = useState("");
-    const router = useRouter();
 
     const login = () => {
         mainRequest.post(SERVER_URL_SIGN_IN,{
@@ -37,6 +42,65 @@ export default function Login() {
         }).catch(()=>{
             window.alert('로그인 실패! 다시 시도 해 주세요.');
         });
+    }
+    const kakaoLogin = async () => {
+
+        const kakao = kakaoInit();
+        
+
+        // 카카오 로그인 구현
+        kakao.Auth.login({
+            
+            success: () => {
+                kakao.API.request({
+                    url: '/v2/user/me', // 사용자 정보 가져오기
+                    success: (res: any) => {
+                        // console.log(res.properties.nickname)
+                        setF_id(res.kakao_account.email);
+                        setF_name(res.properties.nickname);
+                        axios.post(SERVER_URL_SIGN_UP,{ //회원가입
+                            username : f_id,
+                            password : "qwer123!", //보류
+                            nickname : f_name,
+                            phone_number : "01083147735", //보류
+                        }).then((res)=>{//처음 로그인이라면 
+                            console.log("첫번째 로그인 시도 전")
+                            mainRequest.post(SERVER_URL_SIGN_IN,{
+                                username : f_id,
+                                password : "qwer123!",
+                            }).then((res)=>{
+                                console.log(`${res} 첫번째 로그인 성공`);
+                                router.replace('/');
+                            }).catch((err)=>{
+                                console.log(`${err} 첫번째 로그인 실패`);
+                            })
+                        }).catch((err)=>{ //실패시(db가 있다면)
+                            console.log(`${err} 첫번째 실패후 로그인 전`);
+                            mainRequest.post(SERVER_URL_SIGN_IN,{
+                                username : f_id,
+                                password : "qwer123!"
+                            }).then((res)=>{
+                                localStorage.setItem("name",res.data.username)
+                                console.log(`${res} n번째 로그인 성공`)
+                                router.replace('/');
+                            }).catch((err)=>{
+                                console.log(`${err} n번째 로그인 실패`);
+                                
+                            })
+                        })
+                        // console.log("씨발")
+                        // Router.push('/kakao');
+                    },
+                    fail: (error: any) => {
+                        console.log(error);
+                    }
+                })
+            },
+            fail: (error: any) => {
+                console.log(error);
+            }
+        })
+        
     }
   // const [session, loading] = useSession();
 
@@ -92,9 +156,7 @@ export default function Login() {
             </div>
             <button
               className="mx-auto mt-8 w-40 rounded-md bg-yellow-500 font-semibold"
-              onClick={() =>
-                signIn('kakao', { callbackUrl: 'http://localhost:3000' })
-              }>
+              onClick={kakaoLogin}>
               카카오로그인
             </button>
       
