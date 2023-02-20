@@ -12,9 +12,6 @@ const LOGOUT_URL = 'http://localhost:8000/auth/logout';
 const HeaderComponent = () => {
   const [tt,setTest] = useState();
   useEffect(()=>{
-  // if(localStorage.getItem("name")){
-  //   setTest(localStorage.getItem("name"));
-  // }
   const kakao = kakaoInit();
   const KakaoLogout = () => {
 
@@ -30,9 +27,6 @@ const HeaderComponent = () => {
         }
     })
 }
-  if (typeof window !== 'undefined') {
-    const localLogin = localStorage.getItem('name');
-  }
   },[])
   
   const { data, status } = useSession();

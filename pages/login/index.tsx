@@ -1,27 +1,18 @@
 import { useRouter } from 'next/router';
-import { FieldErrors, useForm } from 'react-hook-form';
 import axios from 'axios';
 import Image from 'next/image';
 import loginImage from '/public/login.png';
-import { signIn, signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import mainRequest from '@/utils/request/mainReqeust';
 import { useState } from 'react';
-import HeaderComponent from '@/components/common/Header';
-import { useNavigate } from 'react-router-dom';
 import { kakaoInit } from '@/utils/kakao/kakaoinit';
-
-interface LoginForm {
-  id: string;
-  pw: string;
-}
 
 const SERVER_URL_SIGN_IN = "http://localhost:8000/auth/signin";
 const SERVER_URL_SIGN_UP = "http://localhost:8000/auth/signup";
 
 
 export default function Login() {
-  const [f_id,setF_id] = useState(""); // 비번이랑 휴대폰번호 해야댐.
+    const [f_id,setF_id] = useState(""); // 비번이랑 휴대폰번호 해야댐.
     const [f_name,setF_name] = useState("");
     const router = useRouter();
     const [id,setId] = useState("");
@@ -46,7 +37,6 @@ export default function Login() {
     const kakaoLogin = async () => {
 
         const kakao = kakaoInit();
-        
 
         // 카카오 로그인 구현
         kakao.Auth.login({
@@ -57,6 +47,7 @@ export default function Login() {
                     success: (res: any) => {
                         // console.log(res.properties.nickname)
                         setF_id(res.kakao_account.email);
+                        var pos = f_id.indexOf('@');
                         setF_name(res.properties.nickname);
                         axios.post(SERVER_URL_SIGN_UP,{ //회원가입
                             username : f_id,
@@ -68,28 +59,28 @@ export default function Login() {
                             mainRequest.post(SERVER_URL_SIGN_IN,{
                                 username : f_id,
                                 password : "qwer123!",
-                            }).then((res)=>{
+                            }).then((res)=>{                
                                 console.log(`${res} 첫번째 로그인 성공`);
+                                setF_id(f_id.substr(0,pos));
                                 router.replace('/');
                             }).catch((err)=>{
                                 console.log(`${err} 첫번째 로그인 실패`);
                             })
                         }).catch((err)=>{ //실패시(db가 있다면)
-                            console.log(`${err} 첫번째 실패후 로그인 전`);
+                            console.log(`${err} 첫번째 실패 후 로그인 전`);
                             mainRequest.post(SERVER_URL_SIGN_IN,{
                                 username : f_id,
                                 password : "qwer123!"
                             }).then((res)=>{
                                 localStorage.setItem("name",res.data.username)
                                 console.log(`${res} n번째 로그인 성공`)
+                                setF_id(f_id.substr(0,pos));
                                 router.replace('/');
                             }).catch((err)=>{
                                 console.log(`${err} n번째 로그인 실패`);
                                 
                             })
                         })
-                        // console.log("씨발")
-                        // Router.push('/kakao');
                     },
                     fail: (error: any) => {
                         console.log(error);
@@ -102,38 +93,6 @@ export default function Login() {
         })
         
     }
-  // const [session, loading] = useSession();
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm<LoginForm>({
-    mode: 'onChange',
-  });
-
-  const onValid = (data: LoginForm) => {
-    onSubmit;
-  };
-  const onInvalid = (errors: FieldErrors) => {
-    console.log(errors);
-  };
-
-  const onSubmit = async (data: LoginForm) => {
-    // setLoading(true);
-    console.log(data);
-    // const { id, pw } = data;
-    try {
-      const response = await axios.post('/login', data, {
-        withCredentials: true,
-      });
-      console.log(response);
-    } catch (error: any) {
-      alert(error.response.data);
-    }
-    // setLoading(false);
-  };
 
   return (
     <div className=" flex h-screen items-center justify-around p-16">
@@ -163,71 +122,3 @@ export default function Login() {
     </div>
   );
 }
-
-
-{/* <div className="h-4/5 w-2/5 rounded-3xl bg-slate-300">
-        <div className="p-8 text-center text-4xl font-bold">로그인 폼</div>
-        <div>
-          <form
-            className="flex flex-col p-20"
-            // onSubmit={handleSubmit(onValid, onInvalid)}
-            onSubmit={handleSubmit(onSubmit, onInvalid)}
-          >
-            <label className="mt-8">ID</label>
-            <input
-              {...register('id', {
-                required: '아이디를 적으세요.',
-                minLength: {
-                  message: '잘못된 아이디입니다.',
-                  value: 5,
-                },
-              })}
-              type="text"
-              placeholder="ID"
-              className={`${
-                Boolean(errors.id?.message)
-                  ? 'border-4 border-red-700'
-                  : 'border border-black'
-              }`}
-            />
-            <span className="text-red-700">{errors.id?.message}</span>
-            <label className="mt-8">PW</label>
-            <input
-              {...register('pw', {
-                required: '비밀번호를 적으세요.',
-                minLength: {
-                  message: '잘못된 비밀번호입니다.',
-                  value: 5,
-                },
-              })}
-              type="password"
-              placeholder="Password"
-              className={`${
-                Boolean(errors.pw?.message)
-                  ? 'border-4 border-red-700'
-                  : 'border border-black'
-              }`}
-            />
-            <span className="text-red-700">{errors.pw?.message}</span>
-            <button
-              className="mx-auto mt-8 w-40 rounded-md bg-blue-500 font-semibold"
-              type="submit"
-            >
-              로그인
-            </button>
-            <button>
-              <Link href={"/signup"}>
-                회원가입
-              </Link>
-            </button>
-            <button
-              className="mx-auto mt-8 w-40 rounded-md bg-yellow-500 font-semibold"
-              onClick={() =>
-                signIn('kakao', { callbackUrl: 'http://localhost:3000' })
-              }
-            >
-              카카오로그인
-            </button>
-          </form>
-        </div>
-      </div> */}
