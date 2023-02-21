@@ -38,16 +38,13 @@ export default function Login() {
 
         const kakao = kakaoInit();
 
-        // 카카오 로그인 구현
         kakao.Auth.login({
-            
             success: () => {
                 kakao.API.request({
                     url: '/v2/user/me', // 사용자 정보 가져오기
                     success: (res: any) => {
                         // console.log(res.properties.nickname)
                         setF_id(res.kakao_account.email);
-                        var pos = f_id.indexOf('@');
                         setF_name(res.properties.nickname);
                         axios.post(SERVER_URL_SIGN_UP,{ //회원가입
                             username : f_id,
@@ -61,7 +58,6 @@ export default function Login() {
                                 password : "qwer123!",
                             }).then((res)=>{                
                                 console.log(`${res} 첫번째 로그인 성공`);
-                                setF_id(f_id.substr(0,pos));
                                 router.replace('/');
                             }).catch((err)=>{
                                 console.log(`${err} 첫번째 로그인 실패`);
@@ -74,7 +70,6 @@ export default function Login() {
                             }).then((res)=>{
                                 localStorage.setItem("name",res.data.username)
                                 console.log(`${res} n번째 로그인 성공`)
-                                setF_id(f_id.substr(0,pos));
                                 router.replace('/');
                             }).catch((err)=>{
                                 console.log(`${err} n번째 로그인 실패`);

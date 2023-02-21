@@ -1,8 +1,8 @@
 import '@/styles/globals.css';
 import { AppProps } from 'next/app';
 import { SessionProvider, useSession } from 'next-auth/react';
-import Header from '@/components/common/Header';
 import NavBar from './components/navbar';
+import Footer from './components/footer';
 
 export default function App({
   Component,
@@ -13,9 +13,9 @@ export default function App({
   return (
     <SessionProvider session={session}>
       <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
-      <Header />
       <NavBar />
       <Component {...pageProps} />
+      <Footer/>
     </SessionProvider>
   );
 }
