@@ -4,116 +4,125 @@ import Image from 'next/image';
 import loginImage from '/public/login.png';
 import Link from 'next/link';
 import mainRequest from '@/utils/request/mainReqeust';
-import { useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { kakaoInit } from '@/utils/kakao/kakaoinit';
+import * as Kakao from 'kakao-sdk';
+
 
 const SERVER_URL_SIGN_IN = "http://localhost:8000/auth/signin";
 const SERVER_URL_SIGN_UP = "http://localhost:8000/auth/signup";
 
 
 export default function Login() {
-    const [f_id,setF_id] = useState(""); // 비번이랑 휴대폰번호 해야댐.
-    const [f_name,setF_name] = useState("");
+    const [showBox,setShowBox] = useState(false);
     const router = useRouter();
-    const [id,setId] = useState("");
-    const [password,setPassword] = useState("");
-    const [user,setUser] = useState("");
+    const [phone_number,setPhone_Number] = useState<number | undefined>();
+    const isValidPhoneNumber = phone_number !== undefined;
+    const [id,setId] = useState();
 
-    const login = () => {
-        mainRequest.post(SERVER_URL_SIGN_IN,{
-            username : id,
-            password : password,
-        }).then((res)=>{
-            setUser(res.data.username);
-            window.alert('로그인 성공!');
-            localStorage.setItem("name",res.data.username);
-            router.replace({
-              pathname:"/",
-            })
-        }).catch(()=>{
-            window.alert('로그인 실패! 다시 시도 해 주세요.');
-        });
+    const handleCheck = () => {
+        setShowBox(!showBox);
     }
+    function handleChange(event: ChangeEvent<HTMLInputElement>) {
+        const value = event.target.value.replace(/[^0-9]/g, ''); // 숫자 이외의 문자 제거
+        const match = value.match(/^01(?:0|1|[6-9])(?:\d{3}|\d{4})\d{4}$/); // 휴대폰 번호 추출
+        setPhone_Number(match ? parseInt(match[0], 10) : undefined); // 문자열을 숫자로 변환하여 저장
+    }
+
+    const firstLogin = () => {
+        mainRequest.patch(`http://localhost:8000/auth/${id}`,{
+            phone_number
+        }).then(()=>{
+            router.replace('/');
+        }).catch((err)=>{
+            console.log(err);
+        })
+    }
+
+
+    useEffect(()=>{
+        
+    },[])
+
     const kakaoLogin = async () => {
-
         const kakao = kakaoInit();
-
-        kakao.Auth.login({
+        console.log(kakao);
+        kakao?.Auth.login({
             success: () => {
                 kakao.API.request({
                     url: '/v2/user/me', // 사용자 정보 가져오기
                     success: (res: any) => {
-                        // console.log(res.properties.nickname)
-                        setF_id(res.kakao_account.email);
-                        setF_name(res.properties.nickname);
+                        localStorage.setItem("name",res.properties.nickname)
                         axios.post(SERVER_URL_SIGN_UP,{ //회원가입
-                            username : f_id,
-                            password : "qwer123!", //보류
-                            nickname : f_name,
-                            phone_number : "01083147735", //보류
-                        }).then((res)=>{//처음 로그인이라면 
+                            username : res.kakao_account.email,
+                            password : null,
+                            nickname : res.properties.nickname,
+                        }).then((response)=>{//처음 로그인이라면 
                             console.log("첫번째 로그인 시도 전")
+                            setId(response.data)
                             mainRequest.post(SERVER_URL_SIGN_IN,{
-                                username : f_id,
-                                password : "qwer123!",
-                            }).then((res)=>{                
-                                console.log(`${res} 첫번째 로그인 성공`);
-                                router.replace('/');
+                                username : res.kakao_account.email,
+                            }).then((res : any)=>{//첫번째 로그인 성공
+                                console.log(res.data)
+                                window.alert("로그인 성공!")
+                                handleCheck(); //처음 로그인 일 때 전화번호 입력창 띄움.
                             }).catch((err)=>{
-                                console.log(`${err} 첫번째 로그인 실패`);
+                                window.alert("로그인 실패");
+                                router.replace('/login')
                             })
                         }).catch((err)=>{ //실패시(db가 있다면)
                             console.log(`${err} 첫번째 실패 후 로그인 전`);
                             mainRequest.post(SERVER_URL_SIGN_IN,{
-                                username : f_id,
-                                password : "qwer123!"
-                            }).then((res)=>{
-                                localStorage.setItem("name",res.data.username)
-                                console.log(`${res} n번째 로그인 성공`)
+                                username : res.kakao_account.email,
+                            }).then((res : any)=>{//n번째 로그인 성공
+                                console.log(res)
+                                window.alert("로그인 성공!")
                                 router.replace('/');
-                            }).catch((err)=>{
-                                console.log(`${err} n번째 로그인 실패`);
-                                
+                            }).catch((err)=>{//n번째 로그인 실패
+                                window.alert("로그인 실패");
+                                router.replace('/login')
                             })
                         })
                     },
                     fail: (error: any) => {
-                        console.log(error);
+                        console.log(`${error} 로그인 자체가 실패`);
                     }
                 })
             },
             fail: (error: any) => {
-                console.log(error);
+                console.log(`${error} 로그인 자체가 실패`);
             }
         })
         
     }
-
   return (
     <div className=" flex h-screen items-center justify-around p-16">
-      <div className="h-4/5 w-2/5">
-        <Image
-          src={loginImage}
-          alt="login Image"
-          placeholder="blur"
-          className="rounded-3xl"
-        ></Image>
-      </div>
-      <div>
-                <h1>로그인</h1>
-                <div>
-                <input placeholder="아이디 입력" value={id} onChange={(e)=>{setId(e.target.value);}}/>
-                <input placeholder="비밀번호 입력" type='password' onChange={(e)=>{setPassword(e.target.value);}}/>
-                </div>
-                <button onClick={()=>{login();}}>로그인</button><br/>
-                <button><Link href="./signup">회원가입</Link></button>
-            </div>
+        <div className='place-content-center'> 
             <button
-              className="mx-auto mt-8 w-40 rounded-md bg-yellow-500 font-semibold"
+              className=""
               onClick={kakaoLogin}>
               카카오로그인
             </button>
-      
+            <br/>
+            {showBox && 
+            <div>
+            <label htmlFor="phoneNumber">휴대폰 번호</label><br />
+            <input
+              id="phoneNumber"
+              type="tel"
+              placeholder="010-1234-5678"
+              onChange={handleChange}
+              //value={phoneNumber}
+              required
+            /><br/>
+            <button onClick={firstLogin}>확인</button> 
+            {/* 여기서 localStorage랑 넣어줘야 한다!! */}
+            {!isValidPhoneNumber && (
+              <div style={{ color: 'red' }}>유효한 휴대폰 번호를 입력해주세요.</div>
+            )}
+          </div>
+            }
+        </div>
     </div>
   );
 }

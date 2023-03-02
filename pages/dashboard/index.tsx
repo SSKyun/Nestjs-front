@@ -1,4 +1,3 @@
-import Header from '@/components/common/Header';
 // import { Fragment } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';

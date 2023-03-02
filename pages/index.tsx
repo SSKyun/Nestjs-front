@@ -25,7 +25,7 @@ export default function Main() {
       centeredSlides={true}
       autoplay={{ delay: 3500, disableOnInteraction: false }}
       onSlideChange={() => {}}
-      onSwiper={(swiper) => console.log(swiper)}
+      onSwiper={(swiper) => {}}
       loop={true}
     >
       <SwiperSlide><Image src={farmmain} alt="Main Image" className="z-0 w-full h-1/2 " /></SwiperSlide>
@@ -33,7 +33,7 @@ export default function Main() {
       <SwiperSlide><Image src={farm2} alt="Main Image" className="z-0 w-full h-auto" /></SwiperSlide>
     </Swiper>
     <div className='my-36'>
-      <div className='text-6xl font-bold text-center'>Auto Control</div>
+      <div className='text-6xl font-bold text-center'>내 손 안의 작은 농장</div>
       <div className='text-center mt-6 font-bold'>작물 생육정보와 환경정보에 대한
           데이터를 기반으로 최적 생육환경을 조성</div>
     </div>

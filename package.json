@@ -20,6 +20,7 @@
     "chart.js": "^4.2.0",
     "eslint": "8.33.0",
     "eslint-config-next": "13.1.6",
+    "kakao-sdk": "^3.1.0",
     "next": "13.1.6",
     "next-auth": "^4.19.0",
     "query-string": "^8.1.0",
