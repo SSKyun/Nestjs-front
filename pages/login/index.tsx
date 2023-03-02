@@ -42,7 +42,7 @@ export default function Login() {
 
     useEffect(()=>{
         
-    },[])
+    },[])//
 
     const kakaoLogin = async () => {
         const kakao = kakaoInit();
