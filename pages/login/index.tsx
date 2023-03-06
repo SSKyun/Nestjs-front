@@ -43,58 +43,58 @@ export default function Login() {
 
     const [kakao, setKakao] = useState<any>(null);
     
-useEffect(() => {
-  const loadKakaoSDK = async () => {
-    const kakaoInstance = await kakaoInit();
-    setKakao(kakaoInstance);
-  };
-  if (typeof window !== 'undefined') {
-    loadKakaoSDK();
-  }
-}, []);
+    useEffect(() => {
+      const loadKakaoSDK = async () => {
+        const kakaoInstance = await kakaoInit();
+        setKakao(kakaoInstance);
+      };
+      if (typeof window !== 'undefined') {
+        loadKakaoSDK();
+      }
+    }, []);
 
-const kakaoLogin = useCallback(async () => {
-  if (kakao) {
-    kakao.Auth.login({
-      success: () => {
-        kakao.API.request({
-          url: '/v2/user/me',
-          success: (res: any) => {
-            localStorage.setItem('name', res.properties.nickname);
-            axios
-              .post(SERVER_URL_SIGN_UP, {
-                username: res.kakao_account.email,
-                password: null,
-                nickname: res.properties.nickname,
-              })
-              .then((response) => {
-                setId(response.data);
-                handleCheck();
-              })
-              .catch(() => {
-                mainRequest
-                  .post(SERVER_URL_SIGN_IN, {
+    const kakaoLogin = useCallback(async () => {
+      if (kakao) {
+        kakao.Auth.login({
+          success: () => {
+            kakao.API.request({
+              url: '/v2/user/me',
+              success: (res: any) => {
+                localStorage.setItem('name', res.properties.nickname);
+                axios
+                  .post(SERVER_URL_SIGN_UP, {
                     username: res.kakao_account.email,
+                    password: null,
+                    nickname: res.properties.nickname,
                   })
-                  .then(() => {
-                    router.replace('/');
+                  .then((response) => {
+                    setId(response.data);
+                    handleCheck();
                   })
                   .catch(() => {
-                    router.replace('/login');
+                    mainRequest
+                      .post(SERVER_URL_SIGN_IN, {
+                        username: res.kakao_account.email,
+                      })
+                      .then(() => {
+                        router.replace('/');
+                      })
+                      .catch(() => {
+                        router.replace('/login');
+                      });
                   });
-              });
+              },
+              fail: (error: any) => {
+                console.log(`${error} 로그인 자체가 실패`);
+              },
+            });
           },
           fail: (error: any) => {
             console.log(`${error} 로그인 자체가 실패`);
           },
         });
-      },
-      fail: (error: any) => {
-        console.log(`${error} 로그인 자체가 실패`);
-      },
-    });
-  }
-}, [kakao, setId, handleCheck, router]);
+      }
+    }, [kakao, setId, handleCheck, router]);
 
   return (
     <>
