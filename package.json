@@ -30,6 +30,7 @@
     "react-cookie": "^4.1.1",
     "react-dom": "18.2.0",
     "react-hook-form": "^7.42.1",
+    "react-kakao-login": "^2.1.1",
     "react-router-dom": "^6.8.1",
     "styled-components": "^5.3.6",
     "styled-reset": "^4.4.5",

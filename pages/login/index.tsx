@@ -4,13 +4,15 @@ import Image from 'next/image';
 import loginImage from '/public/login.png';
 import Link from 'next/link';
 import mainRequest from '@/utils/request/mainReqeust';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import { kakaoInit } from '@/utils/kakao/kakaoinit';
 import * as Kakao from 'kakao-sdk';
+import dynamic from 'next/dynamic';
 
 
 const SERVER_URL_SIGN_IN = "http://localhost:8000/auth/signin";
 const SERVER_URL_SIGN_UP = "http://localhost:8000/auth/signup";
+
 
 
 export default function Login() {
@@ -39,63 +41,64 @@ export default function Login() {
         })
     }
 
+    const [kakao, setKakao] = useState<any>(null);
+    
+useEffect(() => {
+  const loadKakaoSDK = async () => {
+    const kakaoInstance = await kakaoInit();
+    setKakao(kakaoInstance);
+  };
+  if (typeof window !== 'undefined') {
+    loadKakaoSDK();
+  }
+}, []);
 
-    useEffect(()=>{
-        
-    },[])//
+const kakaoLogin = useCallback(async () => {
+  if (kakao) {
+    kakao.Auth.login({
+      success: () => {
+        kakao.API.request({
+          url: '/v2/user/me',
+          success: (res: any) => {
+            localStorage.setItem('name', res.properties.nickname);
+            axios
+              .post(SERVER_URL_SIGN_UP, {
+                username: res.kakao_account.email,
+                password: null,
+                nickname: res.properties.nickname,
+              })
+              .then((response) => {
+                setId(response.data);
+                handleCheck();
+              })
+              .catch(() => {
+                mainRequest
+                  .post(SERVER_URL_SIGN_IN, {
+                    username: res.kakao_account.email,
+                  })
+                  .then(() => {
+                    router.replace('/');
+                  })
+                  .catch(() => {
+                    router.replace('/login');
+                  });
+              });
+          },
+          fail: (error: any) => {
+            console.log(`${error} 로그인 자체가 실패`);
+          },
+        });
+      },
+      fail: (error: any) => {
+        console.log(`${error} 로그인 자체가 실패`);
+      },
+    });
+  }
+}, [kakao, setId, handleCheck, router]);
 
-    const kakaoLogin = async () => {
-        const kakao = kakaoInit();
-        console.log(kakao);
-        kakao?.Auth.login({
-            success: () => {
-                kakao.API.request({
-                    url: '/v2/user/me', // 사용자 정보 가져오기
-                    success: (res: any) => {
-                        localStorage.setItem("name",res.properties.nickname)
-                        axios.post(SERVER_URL_SIGN_UP,{ //회원가입
-                            username : res.kakao_account.email,
-                            password : null,
-                            nickname : res.properties.nickname,
-                        }).then((response)=>{//처음 로그인이라면 
-                            console.log("첫번째 로그인 시도 전")
-                            setId(response.data)
-                            mainRequest.post(SERVER_URL_SIGN_IN,{
-                                username : res.kakao_account.email,
-                            }).then((res : any)=>{//첫번째 로그인 성공
-                                console.log(res.data)
-                                window.alert("로그인 성공!")
-                                handleCheck(); //처음 로그인 일 때 전화번호 입력창 띄움.
-                            }).catch((err)=>{
-                                window.alert("로그인 실패");
-                                router.replace('/login')
-                            })
-                        }).catch((err)=>{ //실패시(db가 있다면)
-                            console.log(`${err} 첫번째 실패 후 로그인 전`);
-                            mainRequest.post(SERVER_URL_SIGN_IN,{
-                                username : res.kakao_account.email,
-                            }).then((res : any)=>{//n번째 로그인 성공
-                                console.log(res)
-                                window.alert("로그인 성공!")
-                                router.replace('/');
-                            }).catch((err)=>{//n번째 로그인 실패
-                                window.alert("로그인 실패");
-                                router.replace('/login')
-                            })
-                        })
-                    },
-                    fail: (error: any) => {
-                        console.log(`${error} 로그인 자체가 실패`);
-                    }
-                })
-            },
-            fail: (error: any) => {
-                console.log(`${error} 로그인 자체가 실패`);
-            }
-        })
-        
-    }
   return (
+    <>
+    <div>Kakaotest</div>
     <div className=" flex h-screen items-center justify-around p-16">
         <div className='place-content-center'> 
             <button
@@ -124,5 +127,6 @@ export default function Login() {
             }
         </div>
     </div>
+  </>
   );
 }
