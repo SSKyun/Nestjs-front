@@ -16,31 +16,7 @@ const SERVER_URL_SIGN_UP = "http://localhost:8000/auth/signup";
 
 
 export default function Login() {
-    const [showBox,setShowBox] = useState(false);
     const router = useRouter();
-    const [phone_number,setPhone_Number] = useState<number | undefined>();
-    const isValidPhoneNumber = phone_number !== undefined;
-    const [id,setId] = useState();
-
-    const handleCheck = () => {
-        setShowBox(!showBox);
-    }
-    function handleChange(event: ChangeEvent<HTMLInputElement>) {
-        const value = event.target.value.replace(/[^0-9]/g, ''); // 숫자 이외의 문자 제거
-        const match = value.match(/^01(?:0|1|[6-9])(?:\d{3}|\d{4})\d{4}$/); // 휴대폰 번호 추출
-        setPhone_Number(match ? parseInt(match[0], 10) : undefined); // 문자열을 숫자로 변환하여 저장
-    }
-
-    const firstLogin = () => {
-        mainRequest.patch(`http://localhost:8000/auth/${id}`,{
-            phone_number
-        }).then(()=>{
-            router.replace('/');
-        }).catch((err)=>{
-            console.log(err);
-        })
-    }
-
     const [kakao, setKakao] = useState<any>(null);
     
     useEffect(() => {
@@ -60,16 +36,17 @@ export default function Login() {
             kakao.API.request({
               url: '/v2/user/me',
               success: (res: any) => {
+                console.log(res.kakao_account.phone_number)
                 localStorage.setItem('name', res.properties.nickname);
                 axios
                   .post(SERVER_URL_SIGN_UP, {
                     username: res.kakao_account.email,
                     password: null,
                     nickname: res.properties.nickname,
+                    phone_number : res.kakao_account.phone_number
                   })
-                  .then((response) => {
-                    setId(response.data);
-                    handleCheck();
+                  .then(() => {
+                    router.replace('/');
                   })
                   .catch(() => {
                     mainRequest
@@ -79,7 +56,8 @@ export default function Login() {
                       .then(() => {
                         router.replace('/');
                       })
-                      .catch(() => {
+                      .catch((err) => {
+                        console.log(err)
                         router.replace('/login');
                       });
                   });
@@ -94,11 +72,10 @@ export default function Login() {
           },
         });
       }
-    }, [kakao, setId, handleCheck, router]);
+    }, [kakao, router]);
 
   return (
     <>
-    <div>Kakaotest</div>
     <div className=" flex h-screen items-center justify-around p-16">
         <div className='place-content-center'> 
             <button
@@ -107,24 +84,6 @@ export default function Login() {
               카카오로그인
             </button>
             <br/>
-            {showBox && 
-            <div>
-            <label htmlFor="phoneNumber">휴대폰 번호</label><br />
-            <input
-              id="phoneNumber"
-              type="tel"
-              placeholder="010-1234-5678"
-              onChange={handleChange}
-              //value={phoneNumber}
-              required
-            /><br/>
-            <button onClick={firstLogin}>확인</button> 
-            {/* 여기서 localStorage랑 넣어줘야 한다!! */}
-            {!isValidPhoneNumber && (
-              <div style={{ color: 'red' }}>유효한 휴대폰 번호를 입력해주세요.</div>
-            )}
-          </div>
-            }
         </div>
     </div>
   </>

@@ -1,50 +1,49 @@
-import authRequest from '@/utils/request/authRequest';
-import axios from 'axios';
-import Link from 'next/link';
-import Router, { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react'
-import { useCookies } from 'react-cookie';
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import authRequest from "@/utils/request/authRequest";
+import Link from "next/link";
+import { Board } from "../boards/interface/board";
 
-const SERVER_URL_BOARDS = "localhost:8000/boards"
+type Post = {
+  board: Board;
+};
 
-const BoardPage = () => {
-    const router = useRouter();
+const Boards = () => {
+  const [posts, setPosts] = useState<Post[]>([]);
+  const router = useRouter();
 
-    // const createButton = () => {
-    //     if(localStorage.getItem("kakao-Name") === undefined){
-    //         router.push("/");
-    //     }else{
-    //         router.replace('/boards/create');
-    //     }
-    // }
-    
-    // useEffect(()=>{
-    //     const foo = async () => {
-    //         await axios.get(SERVER_URL_BOARDS,{
-    //         }).then((res)=>{
-    //             console.log(res.data);
-                
-    //         }).catch((err)=>{
-    //             console.log(err)
-    //             window.alert("로그인이 필요한 서비스 입니다.")
-    //             router.push('/login');
-    //         });
-    //     }
-        
-    // },[])
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const response = await authRequest.get<Board[]>("http://localhost:8000/boards");
+        const posts = response.data.map((board) => ({
+          board,
+        }));
+        setPosts(posts);
+      } catch (error) {
+        window.alert("다시 로그인 해 주십시오");
+        router.replace('/login');
+        console.error(error);
+      }
+    };
+    fetchPosts();
+  }, []);
 
-    const createBoard = () => {
-        if(localStorage.getItem("kakao-Name") !== "undefined" || localStorage.getItem("name")){
-            router.push("/boards/create");
-        }else{
-            router.replace("/");
-        }
-    }
-    return(
-        <div>
-            <div>게시판</div>
-            <button onClick={()=>{createBoard();}}>글쓰기</button>
-        </div>
-    );
-}
-export default BoardPage;
+  return (
+    <div>
+      <h1>Boards</h1>
+      <ul id="post-list">
+        {posts.map((post) => (
+          <li key={post.board.id} className="post-item">
+            <Link href={`/boards/show/${post.board.id}`}>
+              <p className="post-title">{post.board.title}</p>
+            </Link>
+          </li>
+        ))}
+      </ul>
+      <Link href={"/boards/create"}>글쓰기</Link>
+    </div>
+  );
+};
+
+export default Boards;

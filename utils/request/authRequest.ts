@@ -13,17 +13,22 @@ authRequest.interceptors.request.use((cfg)=>{
 
 authRequest.interceptors.response.use((res)=>{
     return res
-}, (err)=>{
-    if(err.response.status === 401){
-     axios.get('http://localhost:8000/auth/refresh',{withCredentials:true}).then((res) => {
-        localStorage.setItem('accessToken',res.data.accessToken);
+}, async (err)=>{
+    if(err.response && err.response.status === 401){
+        try {
+            const response = await axios.get('http://localhost:8000/auth/refresh', { withCredentials: true })
+            localStorage.setItem('accessToken', response.data.accessToken)
 
-        err.config.headers['Authorization'] = `Bearer ` + localStorage.getItem('accessToken')
-        return axios(err.config)
-       })
-
-    }else if(err.response.status === 500){
+            err.config.headers['Authorization'] = `Bearer ` + localStorage.getItem('accessToken')
+            return axios(err.config)
+        } catch (error) {
+            console.error(error)
+            Router.push("/")
+        }
+    }else if(err.response && err.response.status === 500){
         Router.push("/")
+    } else {
+        console.error(err)
     }
 });
 
