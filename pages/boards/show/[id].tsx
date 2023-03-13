@@ -4,6 +4,10 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Board } from "../interface/board";
 
+type Post = {
+  board: Board;
+};
+
 const ShowBoard = () => {
   const [board, setBoard] = useState<Board | null>(null);
   const router = useRouter();
@@ -11,7 +15,14 @@ const ShowBoard = () => {
   const showBoard = async (boardId: number) => {
     try {
       const response = await authRequest.get<Board>(`http://localhost:8000/boards/${boardId}`);
-      setBoard(response.data);
+      const getUser = await authRequest.get("http://localhost:8000/auth");
+      if(response.data.status === "PUBLIC" || response.data.status === "PRIVATE" && response.data.user.id === getUser.data.id){
+        setBoard(response.data);
+      }else{
+        window.alert("잘못된 접근입니다.");
+        router.replace("/boards/main");
+      }
+      
     } catch (error) {
       console.error(error);
     }

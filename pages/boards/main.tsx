@@ -15,10 +15,16 @@ const Boards = () => {
 
   const fetchPosts = async () => {
     try {
-      const response = await authRequest.get<Board[]>(`http://localhost:8000/boards`);
+      const response = await authRequest.get<Board[]>(
+        "http://localhost:8000/boards"
+      );
+      console.log(response.data)
       const user = await getUser();
-      const userBoards = response.data.filter((board) => board.status !== "PRIVATE" || board.user.id === user.id);
-      const posts = userBoards.map((board) => ({ board }));
+      const allBoards = response.data.filter(
+        (board) => board.user.id === user.id || board.status === "PUBLIC" || board.status === "PRIVATE"
+      );
+      allBoards.sort((a, b) => (a.createDate < b.createDate ? 1 : -1));
+      const posts = allBoards.map((board) => ({ board }));
       setPosts(posts);
     } catch (error) {
       window.alert("로그인이 필요한 서비스 입니다.(세션 만료)");
@@ -30,6 +36,7 @@ const Boards = () => {
   const getUser = async () => {
     try {
       const response = await authRequest.get("http://localhost:8000/auth");
+      setId(response.data.id)
       return response.data;
     } catch (error) {
       console.log("getUser 에러");
@@ -37,7 +44,10 @@ const Boards = () => {
   };
   
   useEffect(() => {
-    fetchPosts();
+    const fetchData = async () => {
+      fetchPosts();
+    };
+    fetchData();
   }, []);
 
   return (
@@ -52,9 +62,14 @@ const Boards = () => {
               <p className="post-title">비공개 게시글</p>
             </Link>
           ) : (
-            <Link href={`/boards/show/${post.board.id}`}>
-              <p className="post-title">{post.board.title}</p>
-            </Link>
+            <>
+              <Link href={`/boards/show/${post.board.id}`}>
+                <p className="post-title">{post.board.title}</p>
+              </Link>
+              <div>
+                {post.board.user.nickname}
+              </div>
+            </>
           )}
         </li>
       ))}
