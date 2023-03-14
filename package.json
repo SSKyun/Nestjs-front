@@ -8,6 +8,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@material-ui/core": "^4.12.4",
+    "@material-ui/icons": "^4.11.3",
     "@next/font": "13.1.6",
     "@types/chart.js": "^2.9.37",
     "@types/node": "18.11.18",
