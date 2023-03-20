@@ -10,38 +10,37 @@ import Link from 'next/link';
 import { useState } from 'react';
 import 'swiper/css';
 import SwiperCore,{ Navigation, Pagination, EffectFade, Autoplay } from 'swiper';
+import styled from "styled-components";
 
 
+
+const Container = styled.div`
+  background-image: url("farmmain.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center;
+  background-attachment: fixed;
+`;
+
+const InnerContainer = styled.div`
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-y: scroll;
+  color : #FFFFFF;
+`;
 export default function Main() {
   SwiperCore.use([Navigation, Pagination, Autoplay]);
 
 
   return (
-    <>
-    
-    <Swiper
-      spaceBetween={30}
-      slidesPerView={1}
-      centeredSlides={true}
-      autoplay={{ delay: 3500, disableOnInteraction: false }}
-      onSlideChange={() => {}}
-      onSwiper={(swiper) => {}}
-      loop={true}
-    >
-      <SwiperSlide><Image src={farmmain} alt="Main Image" className="z-0 w-full h-1/2 " /></SwiperSlide>
-      <SwiperSlide><Image src={farm} alt="Main Image" className="z-0 w-full h-1/2 " /></SwiperSlide>
-      <SwiperSlide><Image src={farm2} alt="Main Image" className="z-0 w-full h-auto" /></SwiperSlide>
-    </Swiper>
-    <div className='my-36'>
-      <div className='text-6xl font-bold text-center'>내 손 안의 작은 농장</div>
-      <div className='text-center mt-6 font-bold'>작물 생육정보와 환경정보에 대한
-          데이터를 기반으로 최적 생육환경을 조성</div>
-    </div>
-    <div>
-      <Image src={forest} alt="Main Image" className="z-0 w-full h-2/4 brightness-50 relative" />
-      <div className='absolute'>test</div>
-    </div>
-  </>
+    <Container>
+      <InnerContainer>
+        <p>스크롤 가능한 콘텐츠</p>
+      </InnerContainer>
+    </Container>
   );
 }
 
