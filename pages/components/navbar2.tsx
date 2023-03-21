@@ -11,6 +11,7 @@ const Navbar = styled.nav`
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
+  z-index: 1;
 `;
 
 const Logo = styled.img`
@@ -42,11 +43,13 @@ const NavContainer = styled.div`
 const NavLink = styled.a`
 
   color: #FFFFFF;
-  font-size: 18px;
+  font-size: 17px;
   font-weight: bold;
   text-decoration: none;
   writing-mode: horizontal-tb;
 `;
+
+
 
 const Page = () => {
     return (
