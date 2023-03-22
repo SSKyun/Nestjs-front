@@ -81,8 +81,8 @@ export default function Home() {
     slidesToShow: 1,
     slidesToScroll: 1,
     fade: true,
-    autoplay: true, // 자동 슬라이드 활성화
-    autoplaySpeed: 5000, // 슬라이드 넘어가는 시간 설정
+    autoplay: true, 
+    autoplaySpeed: 5000, 
   };
 
   useEffect(() => {
@@ -112,6 +112,7 @@ export default function Home() {
   };
 
   return (
+    <>
     <Container height={containerHeight}>
       <Slider {...settings}>
         {slides.map((slide, index) => (
@@ -125,5 +126,6 @@ export default function Home() {
         ))}
       </Slider>
     </Container>
+    </>
   );
 }

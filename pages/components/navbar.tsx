@@ -1,14 +1,65 @@
-import { kakaoInit } from "@/utils/kakao/kakaoinit";
-import mainRequest from "@/utils/request/mainReqeust";
-import axios from "axios";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { kakaoInit } from '@/utils/kakao/kakaoinit';
+import axios from 'axios';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
+import styled from 'styled-components';
+
+const Navbar = styled.nav`
+  position: fixed;
+  top: 0;
+  left: 40px;
+  height: 100vh;
+  width: 100px;
+  background-color: transparent;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 1;
+`;
+
+const Logo = styled.img`
+  height: 50px;
+  width: 50px;
+  object-fit: contain;
+`;
+
+const NavLinks = styled.ul`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  
+`;
+
+const NavItem = styled.li`
+  margin: 30px 0;
+`;
+
+const NavContainer = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const NavLink = styled.a`
+
+  color: #FFFFFF;
+  font-size: 17px;
+  font-weight: bold;
+  text-decoration: none;
+  writing-mode: horizontal-tb;
+`;
+
 
 const LOGOUT_URL = 'http://localhost:8000/auth/logout';
 
-export default function NavBar(){
-    const router = useRouter();
+
+const Page = () => {
+  const router = useRouter();
     const [userName, setUserName] = useState<string | null>(null);
 
     const logout = () => {
@@ -27,8 +78,8 @@ export default function NavBar(){
           });
           setUserName(null);
       };
-      
-    useEffect(() => {
+
+      useEffect(() => {
         const name = typeof window !== 'undefined' && window.localStorage.getItem('name');
             if (name) {
             setUserName(name);
@@ -41,46 +92,40 @@ export default function NavBar(){
         };
       }, [typeof window !== 'undefined' && window.localStorage.getItem('name')]
     );
-    
-    
-      return (
-        <>
-          <nav className="border-gray-200 px-2 sm:px-4 py-2.5 rounded dark:bg-gray-900">
-            <div className="container flex flex-wrap items-center justify-between mx-auto">
-              <a href="/" className="flex items-center">
-                {/* <img src="" className="h-6 mr-3 sm:h-9" alt="Logo" /> */}
-                <span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">アグリート</span>
-              </a>
-              <button data-collapse-toggle="navbar-default" type="button" className="inline-flex items-center p-2 ml-3 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="navbar-default" aria-expanded="false">
-                <span className="sr-only">Open main menu</span>
-              </button>
-              <div className="hidden w-full md:block md:w-auto" id="navbar-default">
-                <ul className="flex flex-col p-4 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
-                  <li>
-                    <a href="#" className="block py-2 pl-3 pr-4 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 dark:text-white" aria-current="page">Home</a>
-                  </li>
-                  <li>
-                    <a href="#" className="block py-2 pl-3 pr-4 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">About</a>
-                  </li>
-                  <li>
-                    <a href="/boards/main" className="block py-2 pl-3 pr-4 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">FAQ</a>
-                  </li>
-                  <li>
-                    {userName ? (
+
+    return (
+      <div>
+        <Navbar>
+          <NavContainer>
+            <NavLink href="#">アグリート</NavLink>
+          </NavContainer>
+          <NavLinks>
+            <NavItem>
+              <NavLink href="#">PageTop</NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink href="#">Controller</NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink href="#">test</NavLink>
+            </NavItem>
+            <NavItem>
+            {userName ? (
                         <>
                         <div>{`Hello, ${userName}`}</div>
                         <button onClick={logout}>로그아웃</button>
                         </>
                     ) : (
                         <Link href="/login">
-                            <p>로그인</p>
+                            <p className='text-white font-bold'>로그인</p>
                         </Link>
                     )}
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </nav>
-        </>
-      );
-}
+            </NavItem>
+          </NavLinks>
+        </Navbar>
+        {/* 나머지 콘텐츠 */}
+      </div>
+    );
+  };
+
+export default Page;
