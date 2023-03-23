@@ -1,7 +1,7 @@
 import '@/styles/globals.css';
 import { AppProps } from 'next/app';
 import { SessionProvider, useSession } from 'next-auth/react';
-import NavBar2 from './components/navbar2';
+import NavBar from './components/navbar';
 import Footer from './components/footer';
 import { Suspense } from 'react';
 
@@ -15,7 +15,7 @@ export default function App({
     <SessionProvider session={session}>
       <Suspense fallback={<div>Loading...</div>}></Suspense>
       <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
-      <NavBar2 />
+      <NavBar />
       <Component {...pageProps} />
     </SessionProvider>
   );

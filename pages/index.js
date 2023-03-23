@@ -3,13 +3,15 @@ import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import styled from 'styled-components';
+import { animated, useSpring } from 'react-spring';
 
-const Container = styled.div`
+const Container = styled(animated.div)`
   height: ${(props) => props.height}px;
   overflow: hidden;
+  position: relative;
 `;
 
-const Slide = styled.div`
+const Slide = styled(animated.div)`
   height: 100%;
   display: block;
   position: relative;
@@ -43,7 +45,7 @@ const SlideContent = styled.div`
   align-items: center;
   height: 100%;
   filter: brightness(75%);
-
+  padding-top: ${(props) => props.headerHeight}px;
 
   h1 {
     font-size: 3rem;
@@ -53,26 +55,33 @@ const SlideContent = styled.div`
   p {
     font-size: 1.5rem;
   }
-`
+`;
 
 const slides = [
   {
     bgColor: '#5cb85c',
-    img: '/farm.jpg', // 이미지 경로 추가
+    img: '/farm.jpg',
+    title: 'Slide 1',
+    description: 'Description 1',
   },
   {
     bgColor: '#5bc0de',
-    img: '/farm2.jpg', // 이미지 경로 추가
+    img: '/farm2.jpg',
+    title: 'Slide 2',
+    description: 'Description 2',
   },
   {
     bgColor: '#f0ad4e',
-    img: '/farmmain.jpg', // 이미지 경로 추가
+    img: '/farmmain.jpg',
+    title: 'Slide 3',
+    description: 'Description 3',
   },
 ];
 
 export default function Home() {
   const [isMobile, setIsMobile] = useState(false);
   const [containerHeight, setContainerHeight] = useState(0);
+
 
   const settings = {
     dots: false,
@@ -112,20 +121,24 @@ export default function Home() {
   };
 
   return (
-    <>
+    <div>
     <Container height={containerHeight}>
       <Slider {...settings}>
         {slides.map((slide, index) => (
-          <Slide key={index} style={{ backgroundColor: slide.bgColor }}>
+          <Slide>
             <SlideContent>
-              <img src={slide.img} alt={`slide${index}`} />
+              <img
+                src={slide.img}
+                alt={`slide${index}`}
+              />
               <h1>{slide.title}</h1>
               <p>{slide.description}</p>
             </SlideContent>
           </Slide>
         ))}
       </Slider>
+      <div className='text-white font-bold'>asdflkasdjflakdsfjalsdkfjasdl;kfjads;lkfjasd;lfk</div>
     </Container>
-    </>
+    </div>
   );
 }
