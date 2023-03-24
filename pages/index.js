@@ -137,7 +137,7 @@ export default function Home() {
           </Slide>
         ))}
       </Slider>
-      <div className='text-white font-bold'>asdflkasdjflakdsfjalsdkfjasdl;kfjads;lkfjasd;lfk</div>
+
     </Container>
     </div>
   );

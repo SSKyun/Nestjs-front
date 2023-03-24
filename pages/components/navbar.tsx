@@ -112,8 +112,8 @@ const Page = () => {
             <NavItem>
             {userName ? (
                         <>
-                        <div>{`Hello, ${userName}`}</div>
-                        <button onClick={logout}>로그아웃</button>
+                        <div className='text-white font-bold' >{`Hello, ${userName}`}</div>
+                        <button className='text-white font-bold' onClick={logout}>로그아웃</button>
                         </>
                     ) : (
                         <Link href="/login">
