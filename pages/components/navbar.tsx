@@ -97,7 +97,7 @@ const Page = () => {
       <div>
         <Navbar>
           <NavContainer>
-            <NavLink href="#">アグリート</NavLink>
+            <NavLink href="/">アグリート</NavLink>
           </NavContainer>
           <NavLinks>
             <NavItem>

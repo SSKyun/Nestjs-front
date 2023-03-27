@@ -61,20 +61,14 @@ const slides = [
   {
     bgColor: '#5cb85c',
     img: '/farm.jpg',
-    title: 'Slide 1',
-    description: 'Description 1',
   },
   {
     bgColor: '#5bc0de',
     img: '/farm2.jpg',
-    title: 'Slide 2',
-    description: 'Description 2',
   },
   {
     bgColor: '#f0ad4e',
     img: '/farmmain.jpg',
-    title: 'Slide 3',
-    description: 'Description 3',
   },
 ];
 
