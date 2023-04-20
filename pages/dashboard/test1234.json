@@ -1,0 +1,15 @@
+{
+  "sun_day": false,
+  "mon_day": false,
+  "tue_day": true,
+  "wed_day": true,
+  "thu_day": false,
+  "fri_day": false,
+  "sat_day": true,
+  "line_1": true,
+  "line_2": true,
+  "line_3": false,
+  "s_hour": "11",
+  "s_min": "47",
+  "on_time": "309"
+}

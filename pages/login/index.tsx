@@ -9,11 +9,8 @@ import { kakaoInit } from '@/utils/kakao/kakaoinit';
 import * as Kakao from 'kakao-sdk';
 import dynamic from 'next/dynamic';
 
-
 const SERVER_URL_SIGN_IN = "http://localhost:8000/auth/signin";
 const SERVER_URL_SIGN_UP = "http://localhost:8000/auth/signup";
-
-
 
 export default function Login() {
     const router = useRouter();
@@ -36,8 +33,8 @@ export default function Login() {
             kakao.API.request({
               url: '/v2/user/me',
               success: (res: any) => {
-                console.log(res.kakao_account.phone_number)
                 localStorage.setItem('name', res.properties.nickname);
+                localStorage.setItem('savedTime', Date.now().toString());
                 axios
                   .post(SERVER_URL_SIGN_UP, {
                     username: res.kakao_account.email,
@@ -57,7 +54,6 @@ export default function Login() {
                         router.replace('/');
                       })
                       .catch((err) => {
-                        console.log(err)
                         router.replace('/login');
                       });
                   });

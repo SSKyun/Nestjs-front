@@ -13,6 +13,7 @@ import {
   Paper,
   Button,
   IconButton,
+  CircularProgress,
 } from "@material-ui/core";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import EditIcon from "@material-ui/icons/Edit";
@@ -40,6 +41,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const Boards = () => {
   const [posts, setPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
   const [id, setId] = useState<number | null>(null);
   const router = useRouter();
 
@@ -47,6 +49,7 @@ const Boards = () => {
 
   const fetchPosts = async () => {
     try {
+      setLoading(true);
       const response = await authRequest.get<Board[]>(
         "http://localhost:8000/boards"
       );
@@ -64,6 +67,8 @@ const Boards = () => {
       window.alert("로그인이 필요한 서비스 입니다.(세션 만료)");
       router.replace("/login");
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -86,7 +91,28 @@ const Boards = () => {
 
   return (
     <>
-      <h1>FAQ</h1>
+    {loading && (
+      <div className="fixed top-0 left-0 right-0 bottom-0 bg-gray-500 opacity-75 z-50 flex items-center justify-center">
+        <div className="bg-white border py-2 px-5 rounded-lg flex items-center flex-col">
+          <h2 className="font-semibold text-lg">Loading...</h2>
+          <div className="flex justify-center items-center">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              className="animate-spin h-5 w-5 mr-3 border-l-2 border-gray-900"
+            >
+              <circle cx="12" cy="12" r="10" className="opacity-25" />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4.914 13.13a8 8 0 0 0 11.314 0l1.414 1.414a10 10 0 1 1-14.142 0l1.414-1.414zm14.142-2.828a8 8 0 0 0-11.314 0L6.342 9.868a10 10 0 1 1 14.142 0l-1.414 1.414z"
+              />
+            </svg>
+          </div>
+        </div>
+      </div>
+    )}
+      <h1 className="text-3xl text-center my-8">FAQ</h1>
       <TableContainer component={Paper} className={classes.root}>
         <Table className={classes.table} aria-label="simple table">
           <TableHead>

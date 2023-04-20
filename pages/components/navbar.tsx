@@ -70,6 +70,7 @@ const Page = () => {
             // 로컬에서 refresh-token을 발급 받은 걸 사용하면 된다.
             localStorage.removeItem('name');
             localStorage.removeItem('accessToken');
+            typeof window !== 'undefined' && window.localStorage.removeItem('expirationTime');
             window.alert('로그아웃 되었습니다.');
             router.replace('/');
           })
@@ -81,18 +82,26 @@ const Page = () => {
 
       useEffect(() => {
         const name = typeof window !== 'undefined' && window.localStorage.getItem('name');
-            if (name) {
-            setUserName(name);
-            }
-        const kakao = kakaoInit(); 
+        const savedTime = typeof window !== 'undefined' && window.localStorage.getItem('savedTime');
+        const now = Date.now();
+        const THIRTY_MINUTES_IN_MS = 30 * 60 * 1000;
+      
+        if (name && savedTime && now - Number(savedTime) < THIRTY_MINUTES_IN_MS) {
+          setUserName(name);
+        } else {
+          window.localStorage.removeItem('name');
+          window.localStorage.removeItem('savedTime');
+        }
+        const kakao = kakaoInit();
+      
         return () => {
-            if (kakao && kakao.Auth.getAccessToken()) {
+          if (kakao && kakao.Auth.getAccessToken()) {
             kakao.Auth.logout();
-            }
+          }
         };
-      }, [typeof window !== 'undefined' && window.localStorage.getItem('name')]
-    );
-
+        
+      }, []);
+      
     return (
       <div>
         <Navbar>
@@ -111,15 +120,15 @@ const Page = () => {
             </NavItem>
             <NavItem>
             {userName ? (
-                        <>
-                        <div className='text-white font-bold' >{`Hello, ${userName}`}</div>
-                        <button className='text-white font-bold' onClick={logout}>로그아웃</button>
-                        </>
-                    ) : (
-                        <Link href="/login">
-                            <p className='text-white font-bold'>로그인</p>
-                        </Link>
-                    )}
+              <>
+                <div className='text-white font-bold' >{`Hello, ${userName}`}</div>
+                <button className='text-white font-bold' onClick={logout}>Sign Out</button>
+              </>
+            ) : (
+              <Link href="/login">
+                <p className='text-white font-bold'>Sign In</p>
+              </Link>
+            )}
             </NavItem>
           </NavLinks>
         </Navbar>
