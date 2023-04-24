@@ -44,6 +44,11 @@ const Boards = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [id, setId] = useState<number | null>(null);
   const router = useRouter();
+  const [currentPage, setCurrentPage] = useState(1);
+  const postsPerPage = 10; // 한 페이지당 보여줄 게시글의 개수
+  const indexOfLastPost = currentPage * postsPerPage;
+  const indexOfFirstPost = indexOfLastPost - postsPerPage;
+  const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
 
   const classes = useStyles();
 
@@ -113,55 +118,67 @@ const Boards = () => {
       </div>
     )}
       <h1 className="text-3xl text-center my-8">FAQ</h1>
-      <TableContainer component={Paper} className={classes.root}>
-        <Table className={classes.table} aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              <TableCell>ID</TableCell>
-              <TableCell align="center">Title</TableCell>
-              <TableCell align="center">Nickname</TableCell>
-              <TableCell align="center">Answer</TableCell>
+    <TableContainer component={Paper} className={classes.root}>
+      <Table className={classes.table} aria-label="simple table">
+        <TableHead>
+          <TableRow>
+            <TableCell>ID</TableCell>
+            <TableCell align="center">Title</TableCell>
+            <TableCell align="center">Nickname</TableCell>
+            <TableCell align="center">Answer</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {currentPosts.map((post) => (
+            <TableRow key={post.board.id}>
+              <TableCell component="th" scope="row">
+                {post.board.id}
+              </TableCell>
+              <TableCell
+                align="center"
+                className={classes.title}
+                onClick={() => {
+                  post.board.status === "PRIVATE"
+                    ? router.push(`/boards/show/${post.board.id}`)
+                    : router.push(`/boards/show/${post.board.id}`);
+                }}
+              >
+                {post.board.status === "PRIVATE"
+                  ? "비공개 게시글"
+                  : post.board.title}
+              </TableCell>
+              <TableCell align="center">
+                {post.board.user.nickname}
+              </TableCell>
+              <TableCell align="center">
+                
+              </TableCell>
             </TableRow>
-          </TableHead>
-          <TableBody>
-            {posts.map((post) => (
-              <TableRow key={post.board.id}>
-                <TableCell component="th" scope="row">
-                  {post.board.id}
-                </TableCell>
-                <TableCell
-                  align="center"
-                  className={classes.title}
-                  onClick={() => {
-                    post.board.status === "PRIVATE"
-                      ? router.push(`/boards/show/${post.board.id}`)
-                      : router.push(`/boards/show/${post.board.id}`);
-                  }}
-                >
-                  {post.board.status === "PRIVATE"
-                    ? "비공개 게시글"
-                    : post.board.title}
-                </TableCell>
-                <TableCell align="center">
-                  {post.board.user.nickname}
-                </TableCell>
-                <TableCell align="center">
-                  
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <Link href={"/boards/create"}>
-        <Button
-          variant="contained"
-          color="primary"
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+    <div className="flex justify-center mt-4">
+      {Array.from({ length: Math.ceil(posts.length / postsPerPage) }, (_, i) => (
+        <button
+          key={i}
+          className={`mx-2 rounded-full py-2 px-4 ${
+            currentPage === i + 1
+              ? "bg-blue-500 text-white"
+              : "bg-gray-300 text-gray-700"
+          }`}
+          onClick={() => setCurrentPage(i + 1)}
         >
-          글쓰기
-        </Button>
-      </Link>
-    </>
+          {i + 1}
+        </button>
+      ))}
+    </div>
+    <Link href={"/boards/create"}>
+      <Button variant="contained" color="primary">
+        글쓰기
+      </Button>
+    </Link>
+  </>
   );
 }
 

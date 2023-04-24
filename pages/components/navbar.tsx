@@ -85,9 +85,10 @@ const Page = () => {
         const savedTime = typeof window !== 'undefined' && window.localStorage.getItem('savedTime');
         const now = Date.now();
         const THIRTY_MINUTES_IN_MS = 30 * 60 * 1000;
-      
+        
         if (name && savedTime && now - Number(savedTime) < THIRTY_MINUTES_IN_MS) {
           setUserName(name);
+          
         } else {
           window.localStorage.removeItem('name');
           window.localStorage.removeItem('savedTime');
@@ -116,7 +117,7 @@ const Page = () => {
               <NavLink href="#">Controller</NavLink>
             </NavItem>
             <NavItem>
-              <NavLink href="#">test</NavLink>
+              <NavLink href="#">DashBoard</NavLink>
             </NavItem>
             <NavItem>
             {userName ? (
