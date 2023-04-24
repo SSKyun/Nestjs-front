@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 const Background = styled.div`
   height: 100vh;
-  background-image: url('/farm.jpg');
+  background-image: url('/farm2.jpg');
   background-repeat: no-repeat;
   background-size: cover;
   position: fixed;
@@ -22,13 +22,13 @@ const ScrollSection = styled.div`
   transform: translate(-50%, -50%);
   padding: 20px;
   & > main-img-div {
-    background-image: url('/farm2.jpg');
+    background-image: url('/farm.jpg');
     background-size: cover;
     background-position: center center;
     min-height: 100%;
     font-size: 2xl;
     font-weight: bold;
-}
+  }
 `;
 
 const ScrollableContent = styled.div`
