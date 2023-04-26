@@ -20,7 +20,6 @@ export default function App({
       <Suspense fallback={<div>Loading...</div>}></Suspense>
       <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
       {!hideNavbar && <NavBar />}
-      {/* <MiddleSection/> */}
       <Component {...pageProps} />
       
     </SessionProvider>

@@ -34,6 +34,7 @@
     "react-intersection-observer": "^9.4.3",
     "react-kakao-login": "^2.1.1",
     "react-parallax": "^3.5.1",
+    "react-responsive-carousel": "^3.2.23",
     "react-router-dom": "^6.8.1",
     "react-scroll-parallax": "^3.4.2",
     "react-slick": "^0.29.0",

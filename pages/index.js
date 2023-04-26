@@ -1,10 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
+import { Carousel } from 'react-responsive-carousel';
+import 'react-responsive-carousel/lib/styles/carousel.min.css';
+import { useState } from 'react';
+import { useRef } from 'react';
+import { useEffect } from 'react';
 
-const Background = styled.div`
+const StyledCarousel = styled(Carousel)`
   height: 100vh;
-  background-image: url('/farm2.jpg');
-  background-repeat: no-repeat;
+  height: 100vh;
   background-size: cover;
   position: fixed;
   top: 0;
@@ -12,36 +16,68 @@ const Background = styled.div`
   right: 0;
   bottom: 0;
   background-attachment: fixed;
-`;
+  .slide {
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+  }
 
-const ScrollSection = styled.div`
-  height: 50vh;
-  position: absolute;
-  top: 40%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  padding: 20px;
-  & > main-img-div {
-    background-image: url('/farm.jpg');
-    background-size: cover;
-    background-position: center center;
-    min-height: 100%;
-    font-size: 2xl;
-    font-weight: bold;
+  .slide.selected {
+    opacity: 1;
   }
 `;
 
-const ScrollableContent = styled.div`
-  min-height: 100%;
+const SlideImage = styled.img`
+  height: 100vh;
+  object-fit: cover;
+`;
+
+const ScrollSection = styled.div`
+  height: 200vh;
+  position: absolute;
+  top: 120%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 0px 200px;
 `;
 
 export default function Home() {
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const carouselRef = useRef();
   
+
   return (
     <div>
-      <Background />
+      <StyledCarousel
+        ref={carouselRef}
+        showThumbs={false}
+        showStatus={false}
+        infiniteLoop={true}
+        autoPlay={false}
+        interval={5000}
+        stopOnHover={false}
+        emulateTouch={true}
+        swipeable={true}
+        dynamicHeight={false}
+        showArrows={false}
+        showIndicators={false}
+        transitionTime={0} 
+        selectedItem={currentSlide}
+        onChange={(index) => setCurrentSlide(index)}
+      >
+      <div>
+        <SlideImage src="/main-page.jpg" alt="Farm 1" />
+      </div>
+      <div>
+        <SlideImage src="/farm2.jpg" alt="Farm 2" />
+      </div>
+      <div>
+        <SlideImage src="/forest.jpg" alt="Farm 3" />
+      </div>
+    </StyledCarousel>
       <ScrollSection>
-        <main-img-div>Green Wishes</main-img-div>
+        {/* 슬라이드 섹션 */}
+
       </ScrollSection>
     </div>
   );
